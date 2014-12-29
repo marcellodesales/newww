@@ -10,6 +10,7 @@ var replicate = require('replicate')
 , fs = require('fs')
 , sampleUsers = require('./sample_users.json')
 , _auth = require('./_auth.json')
+, config = require('../config')
 
 var crypto = require('crypto')
 function hash (id) {
@@ -74,13 +75,13 @@ function filterUser (id, rev) {
 // thing for the dev server starting up properly.
 function replicateDdocs () {
   request({
-    url: 'http://admin:admin@localhost:15984/_users/_design/_auth'
+    url: 'http://admin:admin@' + config.couch.ip + ':' + config.couch.port + '/_users/_design/_auth'
   , json: true
   }, function (err, res, bod) {
     _auth._rev = bod._rev
 
     request.put({
-      url: 'http://admin:admin@localhost:15984/_users/_design/_auth'
+      url: 'http://admin:admin@' + config.couch.ip + ':' + config.couch.port + '/_users/_design/_auth'
     , body: _auth
     , json: true
     }, function (e, resp, b) {
@@ -110,7 +111,7 @@ function replicatePackages () {
   console.error('replicate packages (around 1/256th of the registry)')
   new Replicator({
     from: 'https://skimdb.npmjs.com/registry',
-    to: 'http://admin:admin@localhost:15984/registry',
+    to: 'http://admin:admin@' + config.couch.ip + ':' + config.couch.port + '/registry',
     filter: filterPackage
   }).push(function () {
     clearTimeout(userTimer)
@@ -130,7 +131,7 @@ function replicateUsers () {
   if (didUsers) return cb()
   didUsers = true
   console.error('replicate users')
-  var to = 'http://admin:admin@localhost:15984/_users'
+  var to = 'http://admin:admin@' + config.couch.ip + ':' + config.couch.port + '/_users'
   request.post({
     json: true
   , uri: to + '/_bulk_docs'
@@ -160,7 +161,7 @@ function morePackages () {
   console.error('even more packages (around 1/16th of the registry)')
   new Replicator({
     from: 'https://skimdb.npmjs.com/registry',
-    to: 'http://admin:admin@localhost:15984/registry',
+    to: 'http://admin:admin@' + config.couch.ip + ':' + config.couch.port + '/registry',
     filter: filterPackageMore
   }).push(function () {
     // this one we just let continue indefinitely.

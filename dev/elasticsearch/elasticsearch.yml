@@ -140,11 +140,11 @@ cluster.name: elasticsearch_npm_www_dev
 
 # Path to directory containing configuration (this file and logging.yml):
 #
-path.conf: ./dev/elasticsearch/
+path.conf: /data
 
 # Path to directory where to store index data allocated for this node.
 #
-path.data: ./dev/elasticsearch/data
+path.data: /data/data
 #
 # Can optionally include more than one location, causing data to be striped across
 # the locations (a la RAID 0) on a file level, favouring locations with most free
@@ -154,11 +154,11 @@ path.data: ./dev/elasticsearch/data
 
 # Path to temporary files:
 #
-path.work: ./dev/elasticsearch/work
+path.work: /data/work
 
 # Path to log files:
 #
-path.logs: ./dev/elasticsearch/logs
+path.logs: /data/logs
 
 # Path to where plugins are installed:
 #

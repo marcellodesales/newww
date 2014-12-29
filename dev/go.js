@@ -2,6 +2,7 @@
  * Ancient @izs magic to run a bunch of servers in child processes neatly.
  */
 
+var config = require('../config')
 var touch = require('touch')
 var spawn = require('child_process').spawn
 var once = require('once')
@@ -61,27 +62,13 @@ process.on('exit', function() {
 
 queue(function (cb) {
   // first, make sure that we have the databases, or replicate will fail
-  touch('dev/couch/registry.couch', cb)
+  touch('/usr/local/var/lib/couchdb/registry.couch', cb)
 
 }, function (cb) {
-  touch('dev/couch/public_users.couch', cb)
+  touch('/usr/local/var/lib/couchdb/public_users.couch', cb)
 
 }, function (cb) {
-  touch('dev/couch/downloads.couch', cb)
-
-}, function (cb) {
-  // start elasticsearch
-  exec('elasticsearch', [
-    '-Des.config=dev/elasticsearch/elasticsearch.yml'
-  ], 5000, cb)
-
-}, function (cb) {
-  // spawn couchdb, and make sure it stays up for a little bit
-  exec('couchdb', ['-a', 'dev/couch/couch.ini'], cb)
-
-}, function (cb) {
-  // do the same for redis.
-  exec('redis-server', ['dev/redis/redis.conf'], cb)
+  touch('/usr/local/var/lib/couchdb/downloads.couch', cb)
 
 }, function (cb) {
   // wait 10 seconds for couch to start and download some data
@@ -94,13 +81,20 @@ queue(function (cb) {
   // by now, elastic search is probably up
   exec(process.execPath, [
     './node_modules/npm2es/bin/npm2es.js'
-    , '--couch=http://localhost:15984/registry'
-    , '--es=http://127.0.0.1:9200/npm'
+    , '--couch=' + config.couch.url
+    , '--es=' + config.search.url
   ], function (code) {
     console.error('did npm2es', code)
     cb(code)
   })
 
+}, function (cb) {
+  // wait 5 seconds to start the server
+  //  // otherwise the site is pretty empty.
+  setTimeout(function() {
+    exec(process.execPath, [require.resolve('../server.js')], 5000, cb)
+  }, 5000)
+ 
 }, function (cb) {
   // by now, elastic search is probably up
   exec(process.execPath, [

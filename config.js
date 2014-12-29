@@ -7,9 +7,12 @@ var path = require('path'),
 var config = module.exports = {};
 
 config.port = process.env.PORT || 15443;
-config.host = "localhost";
-// config.host = '0.0.0.0'
-config.canonicalHost = util.format("https://localhost:%d", config.port);
+config.host = '0.0.0.0'
+config.canonicalHost = util.format("https://%s:%d", config.host, config.port);
+
+config.redis = config.redis || {};
+config.redis.ip = process.env.REDIS_PORT_16379_TCP_ADDR || '127.0.0.1';
+config.redis.port = process.env.REDIS_PORT_16379_TCP_PORT || '16379';
 
 config.server = {
   views: {
@@ -25,8 +28,8 @@ config.server = {
   },
   cache: {
     engine: require('catbox-redis'),
-    host: '127.0.0.1',
-    port: '16379',
+    host: config.redis.ip,
+    port: config.redis.port,
     password: 'i-am-using-redis-in-development-mode-for-npm-www'
   },
   router: {
@@ -94,9 +97,13 @@ config.enterpriseCspScriptSrc = config.csp.scriptSrc.concat(
 
 // ===== service options =====
 config.couch = {
-  "couchAuth": "admin:admin",
-  "registryCouch": "http://localhost:15984/"
+  "couchAuth": "admin:admin"
 };
+
+config.couch.ip = process.env.COUCHDB_PORT_15984_TCP_ADDR || 'localhost';
+config.couch.port = process.env.COUCHDB_PORT_15984_TCP_PORT || '15984';
+config.couch.registryCouch = "http://" + config.couch.ip + ':' + config.couch.port + "/";
+config.couch.url = 'http://' + config.couch.ip + ':' + config.couch.port + '/registry';
 
 config.session = {
   password: 'i dunno, something secure probably? Definitely!',
@@ -106,10 +113,12 @@ config.session = {
 
 config.metrics = {
   collector: {
-    uri: 'udp://localhost:3333'
+    host: '0.0.0.0',
+    port: 3333
   },
   prefix: 'npm-www-dev'
 }
+config.metrics.collector.uri = 'udp://0.0.0.0:' + config.metrics.collector.port;
 
 config.downloads = {
   url: "https://api.npmjs.org/downloads/"
@@ -168,9 +177,12 @@ config.user = {
 
 // options for search (registry facet)
 config.search = {
-  url:'http://127.0.0.1:9200/npm',
   perPage: 24
 };
+
+config.search.ip = process.env.ELASTICSEARCH_PORT_9200_TCP_ADDR || '127.0.0.1';
+config.search.port = process.env.ELASTICSEARCH_PORT_9200_TCP_PORT || '9200';
+config.search.url = 'http://' + config.search.ip + ':' + config.search.port + '/npm';
 
 if (fs.existsSync('./config.admin.js')) {
   Hoek.merge(config, require('./config.admin'), false);

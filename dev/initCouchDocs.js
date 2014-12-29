@@ -1,3 +1,4 @@
+var config = require('../config')
 var request = require('request')
 
 // first sync up the design docs, since this is the most important
@@ -19,7 +20,7 @@ function replicateDdocs (callback) {
     if (res.statusCode !== 200) {
       throw new Error('wtf?\n' + JSON.stringify([res.statusCode, body]))
     }
-    request.put({ url: 'http://admin:admin@localhost:15984/' + ddoc +
+    request.put({ url: 'http://admin:admin@' + config.couch.ip + ':' + config.couch.port + '/' + ddoc +
                        '?new_edits=false', body: body, json: true }, then2)
   }
   function then2 (er, res, body) {

@@ -1,0 +1,53 @@
+npmRegistryCouchdbData:
+  image: busybox
+  volumes:
+    - dev/couch/data:/usr/local/var/lib/couchdb
+    - dev/couch/couch-docker.ini:/usr/local/etc/couchdb/local.ini
+
+npmRegistryCouchdbServer:
+  image: klaemo/couchdb
+  ports:
+    - "15984:15984"
+  volumes_from:
+    - "npmRegistryCouchdbData"
+
+npmRegistryElasticsearchData:
+  image: busybox
+  volumes:
+    - dev/elasticsearch:/data
+    - dev/elasticsearch/elasticsearch.yml:/data/elasticsearch.yml
+
+npmRegistryElasticsearchServer:
+  image: dockerfile/elasticsearch
+  volumes_from:
+    - "npmRegistryElasticsearchData"
+  ports:
+    - "9200:9200"
+    - "9300:9300"
+  command: /elasticsearch/bin/elasticsearch -Des.config=/data/elasticsearch.yml
+
+npmRegistryRedisData:
+  image: busybox
+  volumes:
+    - dev/redis/data:/data
+    - dev/redis/redis.conf:/etc/redis/redis.conf
+
+npmRegistryRedisServer:
+  image: dockerfile/redis
+  volumes_from:
+    - "npmRegistryRedisData"
+  ports:
+    - "16379:16379"
+  command: redis-server /etc/redis/redis.conf
+
+npmregistryserver:
+  build: .
+  ports:
+    - 15443:15443
+  links:
+    - npmRegistryCouchdbServer:couchdb
+    - npmRegistryElasticsearchServer:elasticsearch
+    - npmRegistryRedisServer:redis
+  volumes_from:
+    - "npmRegistryCouchdbData"
+  command: node dev/go

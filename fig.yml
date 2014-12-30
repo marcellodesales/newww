@@ -1,5 +1,5 @@
 npmRegistryCouchdbData:
-  image: busybox
+  image: busybox:latest
   volumes:
     - dev/couch/data:/usr/local/var/lib/couchdb
     - dev/couch/couch-docker.ini:/usr/local/etc/couchdb/local.ini
@@ -12,7 +12,7 @@ npmRegistryCouchdbServer:
     - "npmRegistryCouchdbData"
 
 npmRegistryElasticsearchData:
-  image: busybox
+  image: busybox:latest
   volumes:
     - dev/elasticsearch:/data
     - dev/elasticsearch/elasticsearch.yml:/data/elasticsearch.yml
@@ -27,7 +27,7 @@ npmRegistryElasticsearchServer:
   command: /elasticsearch/bin/elasticsearch -Des.config=/data/elasticsearch.yml
 
 npmRegistryRedisData:
-  image: busybox
+  image: busybox:latest
   volumes:
     - dev/redis/data:/data
     - dev/redis/redis.conf:/etc/redis/redis.conf

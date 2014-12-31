@@ -5,7 +5,7 @@ npmRegistryCouchdbData:
     - dev/couch/couch-docker.ini:/usr/local/etc/couchdb/local.ini
 
 npmRegistryCouchdbServer:
-  image: klaemo/couchdb
+  image: klaemo/couchdb:latest
   ports:
     - "15984:15984"
   volumes_from:
@@ -18,7 +18,7 @@ npmRegistryElasticsearchData:
     - dev/elasticsearch/elasticsearch.yml:/data/elasticsearch.yml
 
 npmRegistryElasticsearchServer:
-  image: dockerfile/elasticsearch
+  image: dockerfile/elasticsearch:latest
   volumes_from:
     - "npmRegistryElasticsearchData"
   ports:
@@ -33,7 +33,7 @@ npmRegistryRedisData:
     - dev/redis/redis.conf:/etc/redis/redis.conf
 
 npmRegistryRedisServer:
-  image: dockerfile/redis
+  image: dockerfile/redis:latest
   volumes_from:
     - "npmRegistryRedisData"
   ports:

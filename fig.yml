@@ -42,6 +42,11 @@ npmRegistryRedisServer:
 
 npmregistryserver:
   build: .
+  #environment:
+  #  - http_proxy=http://qypprdproxy02.ie.company.net:80
+  #  - https_proxy=http://qypprdproxy02.ie.company.net:80
+  #dns:
+  #  - "10.132.73.19"
   ports:
     - 15443:15443
   links:

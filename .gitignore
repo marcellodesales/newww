@@ -3,11 +3,11 @@ node_modules/
 .vagrant
 .env
 .idea
+dev/couch.log
 dev/couch/data/*.couch
 dev/couch/data/.registry_design
 dev/couch/data/._users_design
 dev/couch/data/local.ini
-dev/couch.log
 dev/elasticsearch/data
 dev/elasticsearch/logs
 dev/redis.log

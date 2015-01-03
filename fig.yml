@@ -2,7 +2,7 @@ npmRegistryCouchdbData:
   image: busybox:latest
   volumes:
     - dev/couch/data:/usr/local/var/lib/couchdb
-    - dev/couch/couch-docker.ini:/usr/local/etc/couchdb/local.ini
+    - dev/couch/couch.ini:/usr/local/etc/couchdb/local.ini
 
 npmRegistryCouchdbServer:
   image: klaemo/couchdb:latest
